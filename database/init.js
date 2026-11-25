@@ -12,15 +12,20 @@ require('dotenv').config();
 async function initializeDatabase() {
   console.log('🔄 Initializing DRRACS Disaster Relief Database...');
 
-  // Step 1: Connect to MySQL Server (without specifying database yet, since it might not exist)
+  // Step 1: Connect to MySQL Server (supports local and cloud instances)
   let connection;
   try {
+    const sslOption = process.env.DB_SSL === 'true'
+      ? { rejectUnauthorized: process.env.DB_SSL_REJECT_UNAUTHORIZED !== 'false' }
+      : undefined;
+
     connection = await mysql.createConnection({
       host: process.env.DB_HOST || 'localhost',
       user: process.env.DB_USER || 'root',
       password: process.env.DB_PASSWORD,
-      port: process.env.DB_PORT || 3306,
-      multipleStatements: true // Allows executing the entire schema file with multiple SQL statements
+      port: process.env.DB_PORT ? parseInt(process.env.DB_PORT, 10) : 3306,
+      multipleStatements: true, // Allows executing the entire schema file with multiple SQL statements
+      ssl: sslOption
     });
 
     console.log('✅ Connected to MySQL server successfully.');

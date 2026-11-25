@@ -50,11 +50,17 @@ app.get(['/', '/login', '/citizen', '/officer', '/shelter', '/commander'], (req,
 // 7. Define the port to listen on (from .env or default to 5000)
 const PORT = process.env.PORT || 5000;
 
-// 8. Start the server
-app.listen(PORT, () => {
-  console.log(`==================================================`);
-  console.log(`🚀 DRRACS Server running on http://localhost:${PORT}`);
-  console.log(`📡 Health Check URL: http://localhost:${PORT}/api/health`);
-  console.log(`==================================================`);
-});
+// 8. Start the server (Only when run directly in local development)
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`==================================================`);
+    console.log(`🚀 DRRACS Server running on http://localhost:${PORT}`);
+    console.log(`📡 Health Check URL: http://localhost:${PORT}/api/health`);
+    console.log(`==================================================`);
+  });
+}
+
+// 9. Export the Express app for Vercel Serverless Functions
+module.exports = app;
+
 
